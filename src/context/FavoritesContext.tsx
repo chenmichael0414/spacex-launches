@@ -1,15 +1,19 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface FavoritesContextType {
+type FavoritesContextType = {
   favorites: string[];
   toggleFavorite: (imageUrl: string) => void;
   isFavorite: (imageUrl: string) => boolean;
-}
+};
 
-const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
+const FavoritesContext = createContext<FavoritesContextType | undefined>(
+  undefined
+);
 
-export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
@@ -18,32 +22,34 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const loadFavorites = async () => {
     try {
-      const storedFavorites = await AsyncStorage.getItem('favorites');
+      const storedFavorites = await AsyncStorage.getItem("favorites");
       if (storedFavorites) {
         setFavorites(JSON.parse(storedFavorites));
       }
     } catch (error) {
-      console.error('Error loading favorites:', error);
+      console.error("Error loading favorites:", error);
     }
   };
 
   const toggleFavorite = async (imageUrl: string) => {
     try {
       const newFavorites = favorites.includes(imageUrl)
-        ? favorites.filter(url => url !== imageUrl)
+        ? favorites.filter((url) => url !== imageUrl)
         : [...favorites, imageUrl];
-      
+
       setFavorites(newFavorites);
-      await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+      await AsyncStorage.setItem("favorites", JSON.stringify(newFavorites));
     } catch (error) {
-      console.error('Error saving favorites:', error);
+      console.error("Error saving favorites:", error);
     }
   };
 
   const isFavorite = (imageUrl: string) => favorites.includes(imageUrl);
 
   return (
-    <FavoritesContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>
+    <FavoritesContext.Provider
+      value={{ favorites, toggleFavorite, isFavorite }}
+    >
       {children}
     </FavoritesContext.Provider>
   );
@@ -52,7 +58,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 export const useFavorites = () => {
   const context = useContext(FavoritesContext);
   if (context === undefined) {
-    throw new Error('useFavorites must be used within a FavoritesProvider');
+    throw new Error("useFavorites must be used within a FavoritesProvider");
   }
   return context;
-}; 
+};
