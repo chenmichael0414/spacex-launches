@@ -40,8 +40,63 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
   );
 };
 
+type LaunchOverviewScreenProps = {
+  navigation: any;
+};
+
+export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
+  navigation,
+}) => {
+  const { loading, error, data } = useQuery(GET_LAUNCHES);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text>Error loading launches: {error.message}</Text>
+      </View>
+    );
+  }
+
+  const handleLaunchPress = (launch: Launch) => {
+    navigation.navigate("LaunchDetails", { launch });
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={data.launches}
+        keyExtractor={(item) => item.mission_name}
+        renderItem={({ item }) => (
+          <LaunchCard launch={item} onPress={handleLaunchPress} />
+        )}
+        contentContainerStyle={styles.list}
+      />
+    </View>
+  )
+};
+
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  list: {
+    padding: 16,
+  },
   card: {
     marginBottom: 16,
     elevation: 4,
@@ -50,4 +105,4 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: 8,
   },
-});
+}); 
