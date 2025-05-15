@@ -14,9 +14,9 @@ export type LaunchLinks = {
 export type Launch = {
     mission_name: string;
     launch_date_local: string;
-    LaunchSite: LaunchSite;
-    Rocket: Rocket;
-    LaunchLinks: LaunchLinks;
+    launch_site: LaunchSite;
+    rocket: Rocket;
+    launch_links: LaunchLinks;
 }
 
 export type LaunchResponse = {
