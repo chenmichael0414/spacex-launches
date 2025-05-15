@@ -67,7 +67,7 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
 
   const handleLaunchPress = (launch: Launch) => {
     navigation.navigate("LaunchDetails", { launch });
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -80,19 +80,18 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
         contentContainerStyle={styles.list}
       />
     </View>
-  )
+  );
 };
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   list: {
     padding: 16,
@@ -105,4 +104,4 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: 8,
   },
-}); 
+});
