@@ -8,16 +8,8 @@ import {
 } from "react-native";
 import { Text, Card, IconButton } from "react-native-paper";
 import { useFavorites } from "../context/FavoritesContext";
-import { Launch } from "../types/launch";
 import { format } from "date-fns";
-
-type LaunchDetailsScreenProps ={
-  route: {
-    params: {
-      launch: Launch;
-    };
-  };
-}
+import { LaunchDetailsScreenProps } from "../types/navigation";
 
 export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   route,

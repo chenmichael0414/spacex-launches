@@ -3,14 +3,14 @@ import {
   View,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
-  Image,
+  TouchableOpacity
 } from "react-native";
 import { Text, Card, ActivityIndicator } from "react-native-paper";
 import { useQuery } from "@apollo/client";
 import { GET_LAUNCHES } from "../graphql/queries";
 import { Launch } from "../types/launch";
 import { format } from "date-fns";
+import { LaunchOverviewScreenProps } from '../types/navigation';
 
 type LaunchCardProps = {
   launch: Launch;
@@ -38,10 +38,6 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
       </Card>
     </TouchableOpacity>
   );
-};
-
-type LaunchOverviewScreenProps = {
-  navigation: any;
 };
 
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
