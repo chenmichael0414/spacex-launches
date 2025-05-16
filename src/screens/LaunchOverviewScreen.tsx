@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   FlatList,
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ViewToken,
 } from "react-native";
 import { Text, Card, ActivityIndicator, Button } from "react-native-paper";
 import { useQuery } from "@apollo/client";
@@ -13,30 +14,42 @@ import { Launch } from "../types/launch";
 import { format } from "date-fns";
 import { LaunchOverviewScreenProps } from "../types/navigation";
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
+import * as Animatable from "react-native-animatable";
+
+type AnimatableView = Animatable.View & {
+  fadeInRight: (duration: number) => void;
+};
 
 type LaunchCardProps = {
   launch: Launch;
   onPress: (launch: Launch) => void;
+  cardRef: React.RefObject<AnimatableView | null>;
 };
 
-const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
+const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress, cardRef }) => {
   const launchDate = new Date(launch.launch_date_local);
   const formattedDate = format(launchDate, "MMMM d, yyyy");
 
   return (
     <TouchableOpacity onPress={() => onPress(launch)}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="titleLarge">{launch.mission_name}</Text>
-          <Text variant="bodyMedium">{formattedDate}</Text>
-        </Card.Content>
-        {launch.links.flickr_images[0] && (
-          <Card.Cover
-            source={{ uri: launch.links.flickr_images[0] }}
-            style={styles.image}
-          />
-        )}
-      </Card>
+      <Animatable.View 
+        ref={cardRef} 
+        useNativeDriver
+        style={{ opacity: 0 }}
+      >
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text variant="titleLarge">{launch.mission_name}</Text>
+            <Text variant="bodyMedium">{formattedDate}</Text>
+          </Card.Content>
+          {launch.links.flickr_images[0] && (
+            <Card.Cover
+              source={{ uri: launch.links.flickr_images[0] }}
+              style={styles.image}
+            />
+          )}
+        </Card>
+      </Animatable.View>
     </TouchableOpacity>
   );
 };
@@ -44,6 +57,10 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
+  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const viewabilityTracker = useRef<Record<string, boolean>>({});
+
   const { loading, error, data, refetch } = useQuery(GET_LAUNCHES, {
     fetchPolicy: "network-only",
     onError: (error) => {
@@ -66,7 +83,6 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   });
 
   useEffect(() => {
-    // Check network status when component mounts
     const unsubscribe = NetInfo.addEventListener((state) => {
       if (!state.isConnected) {
         Alert.alert(
@@ -81,6 +97,25 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
       unsubscribe();
     };
   }, []);
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    viewableItems.forEach(({ item, isViewable }) => {
+      const missionName = item.mission_name;
+      
+      if (isViewable && !viewabilityTracker.current[missionName]) {
+        viewabilityTracker.current[missionName] = true;
+        const ref = cardRefs.current[missionName];
+        if (ref?.current?.fadeInRight) {
+          ref.current.fadeInRight(300);
+        }
+      }
+    });
+  }).current;
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 100
+  }).current;
 
   if (loading) {
     return (
@@ -111,21 +146,35 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     navigation.navigate("LaunchDetails", { launch });
   };
 
+  const launches = [...data.launchesPast].sort(
+    (a, b) =>
+      new Date(b.launch_date_local).getTime() -
+      new Date(a.launch_date_local).getTime()
+  );
+
+  launches.forEach(launch => {
+    if (!cardRefs.current[launch.mission_name]) {
+      cardRefs.current[launch.mission_name] = React.createRef<AnimatableView | null>();
+    }
+  });
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={[...data.launchesPast].sort(
-          (a, b) =>
-            new Date(b.launch_date_local).getTime() -
-            new Date(a.launch_date_local).getTime()
-        )}
+        data={launches}
         keyExtractor={(item) => item.mission_name}
         renderItem={({ item }) => (
-          <LaunchCard launch={item} onPress={handleLaunchPress} />
+          <LaunchCard 
+            launch={item} 
+            onPress={handleLaunchPress}
+            cardRef={cardRefs.current[item.mission_name]}
+          />
         )}
         contentContainerStyle={styles.list}
         refreshing={loading}
         onRefresh={refetch}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
       />
     </View>
   );
