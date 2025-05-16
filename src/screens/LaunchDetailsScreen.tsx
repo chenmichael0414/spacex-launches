@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { LaunchDetailsScreenProps } from "../types/navigation";
 import * as Animatable from "react-native-animatable";
 import { useSequentialAnimation } from "../hooks/useSequentialAnimation";
+import { FAVORITE_ANIMATION } from "../constants/animations";
 
 type AnimatableIconButton = Animatable.View & {
   pulse: (duration: number) => void;
@@ -52,24 +53,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
     toggleFavorite(imageUrl);
     const ref = favoriteRefs.current[imageUrl];
     if (ref?.current) {
-      ref.current.animate({
-        0: {
-          scaleX: 1,
-          scaleY: 1,
-        },
-        0.3: {
-          scaleX: 1.25,
-          scaleY: 1.25,
-        },
-        0.6: {
-          scaleX: 0.9,
-          scaleY: 0.9,
-        },
-        1: {
-          scaleX: 1,
-          scaleY: 1,
-        }
-      }, 400);
+      ref.current.animate(FAVORITE_ANIMATION.keyframes, FAVORITE_ANIMATION.duration);
     }
   };
 

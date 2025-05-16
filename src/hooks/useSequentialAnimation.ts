@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as Animatable from 'react-native-animatable';
+import { SEQUENTIAL_ANIMATION } from '../constants/animations';
 
 type AnimatableView = Animatable.View & {
   fadeInRight: (duration: number) => void;
@@ -25,30 +26,30 @@ export const useSequentialAnimation = ({
   useEffect(() => {
     if (!hasAnimated) {
       // Animate card first
-      cardRef.current?.fadeInRight(300);
+      cardRef.current?.fadeInRight(SEQUENTIAL_ANIMATION.card.duration);
       
       // Animate images after a delay
       setTimeout(() => {
         if (hasImages && imageRefs.current) {
           Object.values(imageRefs.current).forEach((ref, index) => {
             setTimeout(() => {
-              ref.current?.fadeInRight(300);
-            }, index * 200); // Stagger image animations
+              ref.current?.fadeInRight(SEQUENTIAL_ANIMATION.image.duration);
+            }, index * SEQUENTIAL_ANIMATION.image.staggerDelay); // Stagger image animations
           });
 
           // Animate article button last
           setTimeout(() => {
             if (hasArticleLink) {
-              articleButtonRef.current?.fadeInRight(300);
+              articleButtonRef.current?.fadeInRight(SEQUENTIAL_ANIMATION.articleButton.duration);
             }
-          }, Object.keys(imageRefs.current).length * 200 + 200);
+          }, Object.keys(imageRefs.current).length * SEQUENTIAL_ANIMATION.image.staggerDelay + SEQUENTIAL_ANIMATION.articleButton.delay);
         } else if (hasArticleLink) {
           // If no images, animate article button after card
           setTimeout(() => {
-            articleButtonRef.current?.fadeInRight(300);
-          }, 300);
+            articleButtonRef.current?.fadeInRight(SEQUENTIAL_ANIMATION.articleButton.duration);
+          }, SEQUENTIAL_ANIMATION.card.duration);
         }
-      }, 300);
+      }, SEQUENTIAL_ANIMATION.card.duration);
 
       setHasAnimated(true);
     }
