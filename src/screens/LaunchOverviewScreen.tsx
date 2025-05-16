@@ -26,17 +26,17 @@ type LaunchCardProps = {
   cardRef: React.RefObject<AnimatableView | null>;
 };
 
-const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress, cardRef }) => {
+const LaunchCard: React.FC<LaunchCardProps> = ({
+  launch,
+  onPress,
+  cardRef,
+}) => {
   const launchDate = new Date(launch.launch_date_local);
   const formattedDate = format(launchDate, "MMMM d, yyyy");
 
   return (
     <TouchableOpacity onPress={() => onPress(launch)}>
-      <Animatable.View 
-        ref={cardRef} 
-        useNativeDriver
-        style={{ opacity: 0 }}
-      >
+      <Animatable.View ref={cardRef} useNativeDriver style={{ opacity: 0 }}>
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="titleLarge">{launch.mission_name}</Text>
@@ -57,8 +57,12 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress, cardRef }) => 
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
-  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
+    {}
+  );
+  const cardRefs = useRef<
+    Record<string, React.RefObject<AnimatableView | null>>
+  >({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
 
   const { loading, error, data, refetch } = useQuery(GET_LAUNCHES, {
@@ -98,23 +102,25 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     };
   }, []);
 
-  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-    viewableItems.forEach(({ item, isViewable }) => {
-      const missionName = item.mission_name;
-      
-      if (isViewable && !viewabilityTracker.current[missionName]) {
-        viewabilityTracker.current[missionName] = true;
-        const ref = cardRefs.current[missionName];
-        if (ref?.current?.fadeInRight) {
-          ref.current.fadeInRight(300);
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      viewableItems.forEach(({ item, isViewable }) => {
+        const missionName = item.mission_name;
+
+        if (isViewable && !viewabilityTracker.current[missionName]) {
+          viewabilityTracker.current[missionName] = true;
+          const ref = cardRefs.current[missionName];
+          if (ref?.current?.fadeInRight) {
+            ref.current.fadeInRight(300);
+          }
         }
-      }
-    });
-  }).current;
+      });
+    }
+  ).current;
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
-    minimumViewTime: 100
+    minimumViewTime: 100,
   }).current;
 
   if (loading) {
@@ -152,9 +158,10 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
       new Date(a.launch_date_local).getTime()
   );
 
-  launches.forEach(launch => {
+  launches.forEach((launch) => {
     if (!cardRefs.current[launch.mission_name]) {
-      cardRefs.current[launch.mission_name] = React.createRef<AnimatableView | null>();
+      cardRefs.current[launch.mission_name] =
+        React.createRef<AnimatableView | null>();
     }
   });
 
@@ -164,8 +171,8 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
         data={launches}
         keyExtractor={(item) => item.mission_name}
         renderItem={({ item }) => (
-          <LaunchCard 
-            launch={item} 
+          <LaunchCard
+            launch={item}
             onPress={handleLaunchPress}
             cardRef={cardRefs.current[item.mission_name]}
           />
