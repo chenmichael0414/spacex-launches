@@ -146,10 +146,13 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
 };
 
 const styles = StyleSheet.create({
+  // Container styles
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+
+  // Card styles
   card: {
     margin: 16,
     elevation: 4,
@@ -165,6 +168,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: "#666",
   },
+
+  // Image styles
   imagesContainer: {
     padding: 16,
     paddingBottom: 8,
@@ -180,6 +185,8 @@ const styles = StyleSheet.create({
   image: {
     height: 200,
   },
+
+  // Favorite button styles
   favoriteButtonContainer: {
     position: "absolute",
     top: 8,
@@ -187,21 +194,6 @@ const styles = StyleSheet.create({
   },
   favoriteButton: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-  },
-  articleButton: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  articleButtonNoImages: {
-    marginTop: 0,
-  },
-  articleButtonText: {
-    color: "white",
   },
   favoritedButton: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -216,5 +208,22 @@ const styles = StyleSheet.create({
     borderColor: "#FF1493",
     borderRadius: 12,
     pointerEvents: "none",
+  },
+
+  // Article button styles
+  articleButton: {
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  articleButtonNoImages: {
+    marginTop: 0,
+  },
+  articleButtonText: {
+    color: "white",
   },
 });
