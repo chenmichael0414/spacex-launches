@@ -59,7 +59,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
 
   return (
     <ScrollView style={styles.container}>
-      <Animatable.View ref={cardRef} useNativeDriver style={{ opacity: 0 }}>
+      <Animatable.View ref={cardRef} useNativeDriver style={styles.initialOpacity}>
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="headlineMedium">{launch.mission_name}</Text>
@@ -87,10 +87,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
               key={index}
               ref={imageRefs.current[imageUrl]}
               useNativeDriver
-              style={[
-                { opacity: 0 },
-                styles.imageContainer
-              ]}
+              style={[styles.initialOpacity, styles.imageContainer]}
             >
               <Card style={styles.imageCard}>
                 <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
@@ -128,7 +125,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
         <Animatable.View 
           ref={articleButtonRef}
           useNativeDriver
-          style={{ opacity: 0 }}
+          style={styles.initialOpacity}
         >
           <TouchableOpacity
             onPress={handleArticlePress}
@@ -150,6 +147,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  initialOpacity: {
+    opacity: 0,
   },
 
   // Card styles
