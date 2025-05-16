@@ -23,11 +23,19 @@ export const LaunchCard: React.FC<LaunchCardProps> = ({
 
   return (
     <TouchableOpacity onPress={() => onPress(launch)}>
-      <Animatable.View ref={cardRef} useNativeDriver style={styles.initialOpacity}>
+      <Animatable.View
+        ref={cardRef}
+        useNativeDriver
+        style={styles.initialOpacity}
+      >
         <Card style={styles.card}>
           <Card.Content>
-            <Text variant="titleLarge" style={styles.title}>{launch.mission_name}</Text>
-            <Text variant="bodyMedium" style={styles.date}>{formattedDate}</Text>
+            <Text variant="titleLarge" style={styles.title}>
+              {launch.mission_name}
+            </Text>
+            <Text variant="bodyMedium" style={styles.date}>
+              {formattedDate}
+            </Text>
           </Card.Content>
           {launch.links.flickr_images[0] && (
             <Card.Cover
