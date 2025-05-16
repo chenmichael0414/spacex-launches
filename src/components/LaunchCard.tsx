@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, ImageStyle } from "react-native";
 import { Text, Card } from "react-native-paper";
 import { format } from "date-fns";
 import * as Animatable from "react-native-animatable";
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   image: {
-    ...commonStyles.image,
-  },
+    height: 200,
+    marginTop: spacing.sm,
+  } as ImageStyle,
 });
