@@ -17,6 +17,7 @@ import {
   AnimatableView,
   AnimatableIconButton,
 } from "../types/animations";
+import { colors, spacing, elevation, borderRadius, commonStyles } from "../theme";
 
 export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   route,
@@ -155,10 +156,9 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
 };
 
 const styles = StyleSheet.create({
-  // Container styles
+  // Base styles
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
+    ...commonStyles.container,
   },
   initialOpacity: {
     opacity: 0,
@@ -166,32 +166,30 @@ const styles = StyleSheet.create({
 
   // Card styles
   card: {
-    margin: 16,
-    elevation: 4,
+    margin: spacing.md,
+    elevation: elevation.medium,
+    backgroundColor: colors.card.background,
   },
   date: {
-    marginTop: 8,
-    color: "#666",
+    marginTop: spacing.sm,
+    color: colors.text.secondary,
   },
   rocket: {
-    marginTop: 16,
-  },
-  site: {
-    marginTop: 8,
-    color: "#666",
+    marginTop: spacing.md,
+    color: colors.text.primary,
   },
 
   // Image styles
   imagesContainer: {
-    padding: 16,
-    paddingBottom: 8,
+    padding: spacing.md,
+    paddingBottom: spacing.sm,
   },
   imageContainer: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   imageCard: {
-    elevation: 4,
-    borderRadius: 12,
+    elevation: elevation.medium,
+    borderRadius: borderRadius.medium,
   },
   image: {
     height: 200,
@@ -200,8 +198,8 @@ const styles = StyleSheet.create({
   // Favorite button styles
   favoriteButtonContainer: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: spacing.sm,
+    right: spacing.sm,
   },
   favoriteButton: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -216,25 +214,25 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderWidth: 2,
-    borderColor: "#FF1493",
-    borderRadius: 12,
+    borderColor: colors.favorite.border,
+    borderRadius: borderRadius.medium,
     pointerEvents: "none",
   },
 
   // Article button styles
   articleButton: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
+    marginHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
+    padding: spacing.md,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.small,
     alignItems: "center",
   },
   articleButtonNoImages: {
     marginTop: 0,
   },
   articleButtonText: {
-    color: "white",
+    color: colors.card.background,
   },
 });
