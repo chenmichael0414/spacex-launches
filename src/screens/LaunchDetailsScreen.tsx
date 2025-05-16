@@ -17,8 +17,23 @@ import {
   AnimatableView,
   AnimatableIconButton,
 } from "../types/animations";
-import { colors, spacing, elevation, borderRadius, commonStyles } from "../theme";
+import {
+  colors,
+  spacing,
+  elevation,
+  borderRadius,
+  commonStyles,
+} from "../theme";
 
+/**
+ * Screen component that displays detailed information about a SpaceX launch
+ * including mission details, images, and article link. Features sequential
+ * animations and favorite functionality for images.
+ *
+ * @component
+ * @param {LaunchDetailsScreenProps} props - Navigation props containing launch data
+ * @returns {React.ReactElement} A scrollable view with launch details and interactive elements
+ */
 export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   route,
 }) => {
@@ -44,12 +59,19 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
     hasArticleLink: !!launch.links.article_link,
   });
 
+  /**
+   * Opens the launch article in the device's default browser
+   */
   const handleArticlePress = () => {
     if (launch.links.article_link) {
       Linking.openURL(launch.links.article_link);
     }
   };
 
+  /**
+   * Toggles the favorite status of an image and triggers the favorite animation
+   * @param {string} imageUrl - The URL of the image to toggle favorite status
+   */
   const handleFavoritePress = (imageUrl: string) => {
     toggleFavorite(imageUrl);
     const ref = favoriteRefs.current[imageUrl];

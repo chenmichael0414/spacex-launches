@@ -11,6 +11,10 @@ import { VIEWABILITY_CONFIG, AnimatableView } from "../types/animations";
 import { LaunchCard } from "../components/LaunchCard";
 import { commonStyles, colors, spacing, typography } from "../theme";
 
+/**
+ * Loading state component displayed while fetching launch data
+ * @returns {React.ReactElement} A centered view with loading indicator
+ */
 const LoadingState = () => (
   <View style={styles.centered}>
     <ActivityIndicator size="large" />
@@ -18,7 +22,20 @@ const LoadingState = () => (
   </View>
 );
 
-const ErrorState = ({ error, onRetry }: { error: Error; onRetry: () => void }) => (
+/**
+ * Error state component displayed when launch data fetch fails
+ * @param {Object} props - Component props
+ * @param {Error} props.error - The error that occurred
+ * @param {() => void} props.onRetry - Function to retry the data fetch
+ * @returns {React.ReactElement} A centered view with error message and retry button
+ */
+const ErrorState = ({
+  error,
+  onRetry,
+}: {
+  error: Error;
+  onRetry: () => void;
+}) => (
   <View style={styles.centered}>
     <Text style={styles.errorText}>Unable to load launches</Text>
     <Text style={styles.errorDetail}>{error.message}</Text>
@@ -28,11 +45,23 @@ const ErrorState = ({ error, onRetry }: { error: Error; onRetry: () => void }) =
   </View>
 );
 
+/**
+ * Main screen component that displays a list of SpaceX launches
+ * Features scroll-aware animations and pull-to-refresh functionality
+ *
+ * @component
+ * @param {LaunchOverviewScreenProps} props - Navigation props
+ * @returns {React.ReactElement} A list of launch cards with animations
+ */
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
-  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
+    {}
+  );
+  const cardRefs = useRef<
+    Record<string, React.RefObject<AnimatableView | null>>
+  >({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
   const { handleError } = useNetworkError();
 
@@ -41,6 +70,10 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     onError: handleError,
   });
 
+  /**
+   * Handles viewable items changes in the FlatList
+   * Triggers fade-in animation when a card becomes visible
+   */
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       viewableItems.forEach(({ item, isViewable }) => {
@@ -67,6 +100,10 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     return <ErrorState error={error} onRetry={refetch} />;
   }
 
+  /**
+   * Navigates to the launch details screen
+   * @param {Launch} launch - The launch data to display
+   */
   const handleLaunchPress = (launch: Launch) => {
     navigation.navigate("LaunchDetails", { launch });
   };
