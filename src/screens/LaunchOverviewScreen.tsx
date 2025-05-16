@@ -3,68 +3,27 @@ import {
   View,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
-  Alert,
   ViewToken,
 } from "react-native";
-import { Text, Card, ActivityIndicator, Button } from "react-native-paper";
+import { Text, ActivityIndicator, Button } from "react-native-paper";
 import { useQuery } from "@apollo/client";
 import { GET_LAUNCHES } from "../graphql/queries";
 import { Launch } from "../types/launch";
-import { format } from "date-fns";
 import { LaunchOverviewScreenProps } from "../types/navigation";
-import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import * as Animatable from "react-native-animatable";
 import { useNetworkError } from "../hooks/useNetworkError";
 import { VIEWABILITY_CONFIG } from "../constants/animations";
+import { LaunchCard } from "../components/LaunchCard";
 
 type AnimatableView = Animatable.View & {
   fadeInRight: (duration: number) => void;
 };
 
-type LaunchCardProps = {
-  launch: Launch;
-  onPress: (launch: Launch) => void;
-  cardRef: React.RefObject<AnimatableView | null>;
-};
-
-const LaunchCard: React.FC<LaunchCardProps> = ({
-  launch,
-  onPress,
-  cardRef,
-}) => {
-  const launchDate = new Date(launch.launch_date_local);
-  const formattedDate = format(launchDate, "MMMM d, yyyy");
-
-  return (
-    <TouchableOpacity onPress={() => onPress(launch)}>
-      <Animatable.View ref={cardRef} useNativeDriver style={{ opacity: 0 }}>
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge">{launch.mission_name}</Text>
-            <Text variant="bodyMedium">{formattedDate}</Text>
-          </Card.Content>
-          {launch.links.flickr_images[0] && (
-            <Card.Cover
-              source={{ uri: launch.links.flickr_images[0] }}
-              style={styles.image}
-            />
-          )}
-        </Card>
-      </Animatable.View>
-    </TouchableOpacity>
-  );
-};
-
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
-    {}
-  );
-  const cardRefs = useRef<
-    Record<string, React.RefObject<AnimatableView | null>>
-  >({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
+  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
   const { handleError } = useNetworkError();
 
@@ -72,22 +31,6 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     fetchPolicy: "network-only",
     onError: handleError,
   });
-
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      if (!state.isConnected) {
-        Alert.alert(
-          "No Internet Connection",
-          "Please check your internet connection and try again.",
-          [{ text: "OK" }]
-        );
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -184,14 +127,6 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-    elevation: 4,
-  },
-  image: {
-    height: 200,
-    marginTop: 8,
   },
   loadingText: {
     marginTop: 10,
