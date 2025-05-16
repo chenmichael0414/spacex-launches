@@ -1,6 +1,36 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimationConfig, SEQUENTIAL_ANIMATION } from "../types/animations";
 
+const animateImages = (
+  imageRefs: React.RefObject<Record<string, React.RefObject<any>>>,
+  hasArticleLink: boolean,
+  articleButtonRef: React.RefObject<any>
+) => {
+  if (!imageRefs.current) return;
+
+  Object.values(imageRefs.current).forEach((ref, index) => {
+    setTimeout(() => {
+      ref.current?.fadeInRight(SEQUENTIAL_ANIMATION.image.duration);
+    }, index * SEQUENTIAL_ANIMATION.image.staggerDelay);
+  });
+
+  if (hasArticleLink) {
+    setTimeout(() => {
+      articleButtonRef.current?.fadeInRight(
+        SEQUENTIAL_ANIMATION.articleButton.duration
+      );
+    }, Object.keys(imageRefs.current).length * SEQUENTIAL_ANIMATION.image.staggerDelay + SEQUENTIAL_ANIMATION.articleButton.delay);
+  }
+};
+
+const animateArticleButton = (articleButtonRef: React.RefObject<any>) => {
+  setTimeout(() => {
+    articleButtonRef.current?.fadeInRight(
+      SEQUENTIAL_ANIMATION.articleButton.duration
+    );
+  }, SEQUENTIAL_ANIMATION.card.duration);
+};
+
 export const useSequentialAnimation = ({
   cardRef,
   imageRefs,
@@ -15,30 +45,12 @@ export const useSequentialAnimation = ({
       // Animate card first
       cardRef.current?.fadeInRight(SEQUENTIAL_ANIMATION.card.duration);
 
-      // Animate images after a delay
+      // Animate images and article button after card
       setTimeout(() => {
-        if (hasImages && imageRefs.current) {
-          Object.values(imageRefs.current).forEach((ref, index) => {
-            setTimeout(() => {
-              ref.current?.fadeInRight(SEQUENTIAL_ANIMATION.image.duration);
-            }, index * SEQUENTIAL_ANIMATION.image.staggerDelay); // Stagger image animations
-          });
-
-          // Animate article button last
-          setTimeout(() => {
-            if (hasArticleLink) {
-              articleButtonRef.current?.fadeInRight(
-                SEQUENTIAL_ANIMATION.articleButton.duration
-              );
-            }
-          }, Object.keys(imageRefs.current).length * SEQUENTIAL_ANIMATION.image.staggerDelay + SEQUENTIAL_ANIMATION.articleButton.delay);
+        if (hasImages) {
+          animateImages(imageRefs, hasArticleLink, articleButtonRef);
         } else if (hasArticleLink) {
-          // If no images, animate article button after card
-          setTimeout(() => {
-            articleButtonRef.current?.fadeInRight(
-              SEQUENTIAL_ANIMATION.articleButton.duration
-            );
-          }, SEQUENTIAL_ANIMATION.card.duration);
+          animateArticleButton(articleButtonRef);
         }
       }, SEQUENTIAL_ANIMATION.card.duration);
 
