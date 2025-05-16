@@ -11,15 +11,28 @@ import { VIEWABILITY_CONFIG, AnimatableView } from "../types/animations";
 import { LaunchCard } from "../components/LaunchCard";
 import { commonStyles, colors, spacing, typography } from "../theme";
 
+const LoadingState = () => (
+  <View style={styles.centered}>
+    <ActivityIndicator size="large" />
+    <Text style={styles.loadingText}>Loading launches...</Text>
+  </View>
+);
+
+const ErrorState = ({ error, onRetry }: { error: Error; onRetry: () => void }) => (
+  <View style={styles.centered}>
+    <Text style={styles.errorText}>Unable to load launches</Text>
+    <Text style={styles.errorDetail}>{error.message}</Text>
+    <Button mode="contained" onPress={onRetry} style={styles.retryButton}>
+      Retry
+    </Button>
+  </View>
+);
+
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
-    {}
-  );
-  const cardRefs = useRef<
-    Record<string, React.RefObject<AnimatableView | null>>
-  >({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
+  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
   const { handleError } = useNetworkError();
 
@@ -47,28 +60,11 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   const viewabilityConfig = useRef(VIEWABILITY_CONFIG).current;
 
   if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Loading launches...</Text>
-      </View>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Unable to load launches</Text>
-        <Text style={styles.errorDetail}>{error.message}</Text>
-        <Button
-          mode="contained"
-          onPress={() => refetch()}
-          style={styles.retryButton}
-        >
-          Retry
-        </Button>
-      </View>
-    );
+    return <ErrorState error={error} onRetry={refetch} />;
   }
 
   const handleLaunchPress = (launch: Launch) => {
