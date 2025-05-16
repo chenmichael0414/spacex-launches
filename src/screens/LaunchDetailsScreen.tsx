@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import { useFavorites } from "../context/FavoritesContext";
 import { format } from "date-fns";
 import { LaunchDetailsScreenProps } from "../types/navigation";
 import * as Animatable from "react-native-animatable";
+import { useSequentialAnimation } from "../hooks/useSequentialAnimation";
 
 type AnimatableIconButton = Animatable.View & {
   pulse: (duration: number) => void;
@@ -32,32 +33,14 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   const cardRef = useRef<AnimatableView | null>(null);
   const imageRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
   const articleButtonRef = useRef<AnimatableView | null>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
 
-  useEffect(() => {
-    if (!hasAnimated) {
-      // Animate card first
-      cardRef.current?.fadeInRight(300);
-      
-      // Animate images after a delay
-      setTimeout(() => {
-        launch.links.flickr_images.slice(0, 3).forEach((imageUrl, index) => {
-          setTimeout(() => {
-            imageRefs.current[imageUrl]?.current?.fadeInRight(300);
-          }, index * 200); // Stagger image animations
-        });
-
-        // Animate article button last
-        setTimeout(() => {
-          if (launch.links.article_link) {
-            articleButtonRef.current?.fadeInRight(300);
-          }
-        }, launch.links.flickr_images.length * 200 + 200);
-      }, 300);
-
-      setHasAnimated(true);
-    }
-  }, [hasAnimated, launch.links.flickr_images.length, launch.links.article_link]);
+  useSequentialAnimation({
+    cardRef,
+    imageRefs: useRef(imageRefs.current),
+    articleButtonRef,
+    hasImages: launch.links.flickr_images.length > 0,
+    hasArticleLink: !!launch.links.article_link,
+  });
 
   const handleArticlePress = () => {
     if (launch.links.article_link) {
