@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     ...commonStyles.card,
   },
   title: {
-    color: colors.text.primary,
+    ...commonStyles.text.primary,
   },
   date: {
     color: colors.text.secondary,
