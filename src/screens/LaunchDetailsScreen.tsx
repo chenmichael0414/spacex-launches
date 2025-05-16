@@ -69,7 +69,24 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
     toggleFavorite(imageUrl);
     const ref = favoriteRefs.current[imageUrl];
     if (ref?.current) {
-      ref.current.pulse(300);
+      ref.current.animate({
+        0: {
+          scaleX: 1,
+          scaleY: 1,
+        },
+        0.3: {
+          scaleX: 1.25,
+          scaleY: 1.25,
+        },
+        0.6: {
+          scaleX: 0.9,
+          scaleY: 0.9,
+        },
+        1: {
+          scaleX: 1,
+          scaleY: 1,
+        }
+      }, 400);
     }
   };
 
@@ -129,7 +146,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
                 {isFavorite(imageUrl) && (
                   <Animatable.View 
                     animation="fadeIn"
-                    duration={250}
+                    duration={175}
                     useNativeDriver
                     style={styles.favoriteBorder} 
                   />
