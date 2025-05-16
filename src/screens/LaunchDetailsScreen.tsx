@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,6 +16,10 @@ type AnimatableIconButton = Animatable.View & {
   pulse: (duration: number) => void;
 };
 
+type AnimatableView = Animatable.View & {
+  fadeInRight: (duration: number) => void;
+};
+
 export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   route,
 }) => {
@@ -24,6 +28,36 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   const launchDate = new Date(launch.launch_date_local);
   const formattedDate = format(launchDate, "MMMM d, yyyy");
   const favoriteRefs = useRef<Record<string, React.RefObject<AnimatableIconButton | null>>>({});
+  
+  const cardRef = useRef<AnimatableView | null>(null);
+  const imageRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const articleButtonRef = useRef<AnimatableView | null>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    if (!hasAnimated) {
+      // Animate card first
+      cardRef.current?.fadeInRight(300);
+      
+      // Animate images after a delay
+      setTimeout(() => {
+        launch.links.flickr_images.slice(0, 3).forEach((imageUrl, index) => {
+          setTimeout(() => {
+            imageRefs.current[imageUrl]?.current?.fadeInRight(300);
+          }, index * 200); // Stagger image animations
+        });
+
+        // Animate article button last
+        setTimeout(() => {
+          if (launch.links.article_link) {
+            articleButtonRef.current?.fadeInRight(300);
+          }
+        }, launch.links.flickr_images.length * 200 + 200);
+      }, 300);
+
+      setHasAnimated(true);
+    }
+  }, [hasAnimated, launch.links.flickr_images.length, launch.links.article_link]);
 
   const handleArticlePress = () => {
     if (launch.links.article_link) {
@@ -41,54 +75,72 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
 
   return (
     <ScrollView style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text variant="headlineMedium">{launch.mission_name}</Text>
-          <Text variant="titleMedium" style={styles.date}>
-            {formattedDate}
-          </Text>
-          <Text variant="bodyLarge" style={styles.rocket}>
-            Rocket: {launch.rocket.rocket_name}
-          </Text>
-        </Card.Content>
-      </Card>
+      <Animatable.View ref={cardRef} useNativeDriver style={{ opacity: 0 }}>
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text variant="headlineMedium">{launch.mission_name}</Text>
+            <Text variant="titleMedium" style={styles.date}>
+              {formattedDate}
+            </Text>
+            <Text variant="bodyLarge" style={styles.rocket}>
+              Rocket: {launch.rocket.rocket_name}
+            </Text>
+          </Card.Content>
+        </Card>
+      </Animatable.View>
 
       <View style={styles.imagesContainer}>
         {launch.links.flickr_images.slice(0, 3).map((imageUrl, index) => {
           if (!favoriteRefs.current[imageUrl]) {
             favoriteRefs.current[imageUrl] = React.createRef<AnimatableIconButton | null>();
           }
+          if (!imageRefs.current[imageUrl]) {
+            imageRefs.current[imageUrl] = React.createRef<AnimatableView | null>();
+          }
           
           return (
-            <Card key={index} style={styles.imageCard}>
-              <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
-              <Animatable.View 
-                ref={favoriteRefs.current[imageUrl]}
-                useNativeDriver
-                style={styles.favoriteButtonContainer}
-              >
-                <IconButton
-                  icon={isFavorite(imageUrl) ? "heart" : "heart-outline"}
-                  size={24}
-                  onPress={() => handleFavoritePress(imageUrl)}
-                  style={styles.favoriteButton}
-                />
-              </Animatable.View>
-            </Card>
+            <Animatable.View 
+              key={index}
+              ref={imageRefs.current[imageUrl]}
+              useNativeDriver
+              style={{ opacity: 0 }}
+            >
+              <Card style={styles.imageCard}>
+                <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
+                <Animatable.View 
+                  ref={favoriteRefs.current[imageUrl]}
+                  useNativeDriver
+                  style={styles.favoriteButtonContainer}
+                >
+                  <IconButton
+                    icon={isFavorite(imageUrl) ? "heart" : "heart-outline"}
+                    size={24}
+                    onPress={() => handleFavoritePress(imageUrl)}
+                    style={styles.favoriteButton}
+                  />
+                </Animatable.View>
+              </Card>
+            </Animatable.View>
           );
         })}
       </View>
 
       {launch.links.article_link && (
-        <TouchableOpacity
-          onPress={handleArticlePress}
-          style={[
-            styles.articleButton,
-            launch.links.flickr_images.length === 0 && styles.articleButtonNoImages
-          ]}
+        <Animatable.View 
+          ref={articleButtonRef}
+          useNativeDriver
+          style={{ opacity: 0 }}
         >
-          <Text variant="bodyLarge" style={styles.articleButtonText}>Read Article</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleArticlePress}
+            style={[
+              styles.articleButton,
+              launch.links.flickr_images.length === 0 && styles.articleButtonNoImages
+            ]}
+          >
+            <Text variant="bodyLarge" style={styles.articleButtonText}>Read Article</Text>
+          </TouchableOpacity>
+        </Animatable.View>
       )}
     </ScrollView>
   );
