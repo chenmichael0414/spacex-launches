@@ -33,4 +33,9 @@ export const SEQUENTIAL_ANIMATION = {
     duration: 300,
     delay: 200,
   },
+};
+
+export const VIEWABILITY_CONFIG = {
+  itemVisiblePercentThreshold: 50,
+  minimumViewTime: 100,
 }; 

@@ -29,10 +29,14 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   const { isFavorite, toggleFavorite } = useFavorites();
   const launchDate = new Date(launch.launch_date_local);
   const formattedDate = format(launchDate, "MMMM d, yyyy");
-  const favoriteRefs = useRef<Record<string, React.RefObject<AnimatableIconButton | null>>>({});
-  
+  const favoriteRefs = useRef<
+    Record<string, React.RefObject<AnimatableIconButton | null>>
+  >({});
+
   const cardRef = useRef<AnimatableView | null>(null);
-  const imageRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const imageRefs = useRef<
+    Record<string, React.RefObject<AnimatableView | null>>
+  >({});
   const articleButtonRef = useRef<AnimatableView | null>(null);
 
   useSequentialAnimation({
@@ -53,13 +57,20 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
     toggleFavorite(imageUrl);
     const ref = favoriteRefs.current[imageUrl];
     if (ref?.current) {
-      ref.current.animate(FAVORITE_ANIMATION.keyframes, FAVORITE_ANIMATION.duration);
+      ref.current.animate(
+        FAVORITE_ANIMATION.keyframes,
+        FAVORITE_ANIMATION.duration
+      );
     }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Animatable.View ref={cardRef} useNativeDriver style={styles.initialOpacity}>
+      <Animatable.View
+        ref={cardRef}
+        useNativeDriver
+        style={styles.initialOpacity}
+      >
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="headlineMedium">{launch.mission_name}</Text>
@@ -76,14 +87,16 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
       <View style={styles.imagesContainer}>
         {launch.links.flickr_images.slice(0, 3).map((imageUrl, index) => {
           if (!favoriteRefs.current[imageUrl]) {
-            favoriteRefs.current[imageUrl] = React.createRef<AnimatableIconButton | null>();
+            favoriteRefs.current[imageUrl] =
+              React.createRef<AnimatableIconButton | null>();
           }
           if (!imageRefs.current[imageUrl]) {
-            imageRefs.current[imageUrl] = React.createRef<AnimatableView | null>();
+            imageRefs.current[imageUrl] =
+              React.createRef<AnimatableView | null>();
           }
-          
+
           return (
-            <Animatable.View 
+            <Animatable.View
               key={index}
               ref={imageRefs.current[imageUrl]}
               useNativeDriver
@@ -91,7 +104,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
             >
               <Card style={styles.imageCard}>
                 <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
-                <Animatable.View 
+                <Animatable.View
                   ref={favoriteRefs.current[imageUrl]}
                   useNativeDriver
                   style={styles.favoriteButtonContainer}
@@ -102,17 +115,17 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
                     onPress={() => handleFavoritePress(imageUrl)}
                     style={[
                       styles.favoriteButton,
-                      isFavorite(imageUrl) && styles.favoritedButton
+                      isFavorite(imageUrl) && styles.favoritedButton,
                     ]}
                     iconColor={isFavorite(imageUrl) ? "#FF69B4" : undefined}
                   />
                 </Animatable.View>
                 {isFavorite(imageUrl) && (
-                  <Animatable.View 
+                  <Animatable.View
                     animation="fadeIn"
                     duration={175}
                     useNativeDriver
-                    style={styles.favoriteBorder} 
+                    style={styles.favoriteBorder}
                   />
                 )}
               </Card>
@@ -122,7 +135,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
       </View>
 
       {launch.links.article_link && (
-        <Animatable.View 
+        <Animatable.View
           ref={articleButtonRef}
           useNativeDriver
           style={styles.initialOpacity}
@@ -131,10 +144,13 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
             onPress={handleArticlePress}
             style={[
               styles.articleButton,
-              launch.links.flickr_images.length === 0 && styles.articleButtonNoImages
+              launch.links.flickr_images.length === 0 &&
+                styles.articleButtonNoImages,
             ]}
           >
-            <Text variant="bodyLarge" style={styles.articleButtonText}>Read Article</Text>
+            <Text variant="bodyLarge" style={styles.articleButtonText}>
+              Read Article
+            </Text>
           </TouchableOpacity>
         </Animatable.View>
       )}
