@@ -27,7 +27,11 @@ export default function App() {
       <PaperProvider theme={theme}>
         <FavoritesProvider>
           <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator
+              screenOptions={{
+                headerTitleAlign: 'center',
+              }}
+            >
               <Stack.Screen 
                 name="LaunchOverview" 
                 component={LaunchOverviewScreen}
