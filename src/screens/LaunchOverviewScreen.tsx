@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import {
   View,
   FlatList,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
 } from "react-native";
-import { Text, Card, ActivityIndicator } from "react-native-paper";
+import { Text, Card, ActivityIndicator, Button } from "react-native-paper";
 import { useQuery } from "@apollo/client";
 import { GET_LAUNCHES } from "../graphql/queries";
 import { Launch } from "../types/launch";
 import { format } from "date-fns";
-import { LaunchOverviewScreenProps } from '../types/navigation';
+import { LaunchOverviewScreenProps } from "../types/navigation";
+import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 
 type LaunchCardProps = {
   launch: Launch;
@@ -43,12 +45,50 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const { loading, error, data } = useQuery(GET_LAUNCHES);
+  const { loading, error, data, refetch } = useQuery(GET_LAUNCHES, {
+    fetchPolicy: "network-only",
+    onError: (error) => {
+      NetInfo.fetch().then((state: NetInfoState) => {
+        if (!state.isConnected) {
+          Alert.alert(
+            "No Internet Connection",
+            "Please check your internet connection and try again.",
+            [{ text: "OK" }]
+          );
+        } else {
+          Alert.alert(
+            "Error Loading Data",
+            `There was a problem loading the launch data: ${error.message}`,
+            [{ text: "OK" }]
+          );
+        }
+      });
+    },
+  });
+
+
+  useEffect(() => {
+    // Check network status when component mounts
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        Alert.alert(
+          'No Internet Connection',
+          'Please check your internet connection and try again.',
+          [{ text: 'OK' }]
+        );
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   if (loading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
+        <Text style={styles.loadingText}>Loading launches...</Text>
       </View>
     );
   }
@@ -56,7 +96,15 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text>Error loading launches: {error.message}</Text>
+        <Text style={styles.errorText}>Unable to load launches</Text>
+        <Text style={styles.errorDetail}>{error.message}</Text>
+        <Button
+          mode="contained"
+          onPress={() => refetch()}
+          style={styles.retryButton}
+        >
+          Retry
+        </Button>
       </View>
     );
   }
@@ -74,6 +122,8 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
           <LaunchCard launch={item} onPress={handleLaunchPress} />
         )}
         contentContainerStyle={styles.list}
+        refreshing={loading}
+        onRefresh={refetch}
       />
     </View>
   );
@@ -88,6 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
   list: {
     padding: 16,
@@ -99,5 +150,22 @@ const styles = StyleSheet.create({
   image: {
     height: 200,
     marginTop: 8,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  errorDetail: {
+    fontSize: 14,
+    color: '#999',
+  },
+  retryButton: {
+    marginTop: 10,
   },
 });
