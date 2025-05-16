@@ -12,15 +12,11 @@ import { format } from "date-fns";
 import { LaunchDetailsScreenProps } from "../types/navigation";
 import * as Animatable from "react-native-animatable";
 import { useSequentialAnimation } from "../hooks/useSequentialAnimation";
-import { FAVORITE_ANIMATION } from "../constants/animations";
-
-type AnimatableIconButton = Animatable.View & {
-  pulse: (duration: number) => void;
-};
-
-type AnimatableView = Animatable.View & {
-  fadeInRight: (duration: number) => void;
-};
+import {
+  FAVORITE_ANIMATION,
+  AnimatableView,
+  AnimatableIconButton,
+} from "../types/animations";
 
 export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   route,

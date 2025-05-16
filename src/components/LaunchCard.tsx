@@ -4,10 +4,7 @@ import { Text, Card } from "react-native-paper";
 import { format } from "date-fns";
 import * as Animatable from "react-native-animatable";
 import { Launch } from "../types/launch";
-
-type AnimatableView = Animatable.View & {
-  fadeInRight: (duration: number) => void;
-};
+import { AnimatableView } from "../types/animations";
 
 type LaunchCardProps = {
   launch: Launch;
@@ -25,7 +22,11 @@ export const LaunchCard: React.FC<LaunchCardProps> = ({
 
   return (
     <TouchableOpacity onPress={() => onPress(launch)}>
-      <Animatable.View ref={cardRef} useNativeDriver style={styles.initialOpacity}>
+      <Animatable.View
+        ref={cardRef}
+        useNativeDriver
+        style={styles.initialOpacity}
+      >
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="titleLarge">{launch.mission_name}</Text>
@@ -55,4 +56,4 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: 8,
   },
-}); 
+});

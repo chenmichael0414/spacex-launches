@@ -1,3 +1,23 @@
+import * as Animatable from "react-native-animatable";
+
+export type AnimatableView = Animatable.View & {
+  fadeInRight: (duration: number) => void;
+};
+
+export type AnimatableIconButton = Animatable.View & {
+  pulse: (duration: number) => void;
+};
+
+export type AnimationConfig = {
+  cardRef: React.RefObject<AnimatableView | null>;
+  imageRefs: React.RefObject<
+    Record<string, React.RefObject<AnimatableView | null>>
+  >;
+  articleButtonRef: React.RefObject<AnimatableView | null>;
+  hasImages: boolean;
+  hasArticleLink: boolean;
+};
+
 export const FAVORITE_ANIMATION = {
   keyframes: {
     0: {
@@ -15,7 +35,7 @@ export const FAVORITE_ANIMATION = {
     1: {
       scaleX: 1,
       scaleY: 1,
-    }
+    },
   },
   duration: 400,
 };
@@ -38,4 +58,4 @@ export const SEQUENTIAL_ANIMATION = {
 export const VIEWABILITY_CONFIG = {
   itemVisiblePercentThreshold: 50,
   minimumViewTime: 100,
-}; 
+};

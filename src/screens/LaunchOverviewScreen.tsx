@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  ViewToken,
-} from "react-native";
+import { View, FlatList, StyleSheet, ViewToken } from "react-native";
 import { Text, ActivityIndicator, Button } from "react-native-paper";
 import { useQuery } from "@apollo/client";
 import { GET_LAUNCHES } from "../graphql/queries";
@@ -12,18 +7,18 @@ import { Launch } from "../types/launch";
 import { LaunchOverviewScreenProps } from "../types/navigation";
 import * as Animatable from "react-native-animatable";
 import { useNetworkError } from "../hooks/useNetworkError";
-import { VIEWABILITY_CONFIG } from "../constants/animations";
+import { VIEWABILITY_CONFIG, AnimatableView } from "../types/animations";
 import { LaunchCard } from "../components/LaunchCard";
-
-type AnimatableView = Animatable.View & {
-  fadeInRight: (duration: number) => void;
-};
 
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
-  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
+    {}
+  );
+  const cardRefs = useRef<
+    Record<string, React.RefObject<AnimatableView | null>>
+  >({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
   const { handleError } = useNetworkError();
 
