@@ -9,6 +9,7 @@ import * as Animatable from "react-native-animatable";
 import { useNetworkError } from "../hooks/useNetworkError";
 import { VIEWABILITY_CONFIG, AnimatableView } from "../types/animations";
 import { LaunchCard } from "../components/LaunchCard";
+import { commonStyles, colors, spacing, typography } from "../theme";
 
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
@@ -111,33 +112,29 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
+    ...commonStyles.container,
   },
   centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    ...commonStyles.centered,
   },
   list: {
-    padding: 16,
+    padding: spacing.md,
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: 16,
+    marginTop: spacing.sm,
+    fontSize: typography.sizes.medium,
   },
   errorText: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 10,
+    fontSize: typography.sizes.medium,
+    color: colors.text.secondary,
+    marginBottom: spacing.sm,
     textAlign: "center",
   },
   errorDetail: {
-    fontSize: 14,
-    color: "#999",
+    fontSize: typography.sizes.small,
+    color: colors.text.tertiary,
   },
   retryButton: {
-    marginTop: 10,
+    marginTop: spacing.sm,
   },
 });
