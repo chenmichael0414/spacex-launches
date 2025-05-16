@@ -16,9 +16,9 @@ export type Launch = {
   launch_date_local: string;
   launch_site: LaunchSite;
   rocket: Rocket;
-  launch_links: LaunchLinks;
+  links: LaunchLinks;
 };
 
 export type LaunchResponse = {
-  launches: Launch[];
+  launchesPast: Launch[];
 };

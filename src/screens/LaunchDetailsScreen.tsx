@@ -20,8 +20,8 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
   const formattedDate = format(launchDate, "MMMM d, yyyy");
 
   const handleArticlePress = () => {
-    if (launch.launch_links.article_link) {
-      Linking.openURL(launch.launch_links.article_link);
+    if (launch.links.article_link) {
+      Linking.openURL(launch.links.article_link);
     }
   };
 
@@ -36,14 +36,11 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
           <Text variant="bodyLarge" style={styles.rocket}>
             Rocket: {launch.rocket.rocket_name}
           </Text>
-          <Text variant="bodyMedium" style={styles.site}>
-            Launch Site: {launch.launch_site.site_name_long}
-          </Text>
         </Card.Content>
       </Card>
 
       <View style={styles.imagesContainer}>
-        {launch.launch_links.flickr_images.slice(0, 3).map((imageUrl, index) => (
+        {launch.links.flickr_images.slice(0, 3).map((imageUrl, index) => (
           <Card key={index} style={styles.imageCard}>
             <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
             <IconButton
@@ -56,7 +53,7 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
         ))}
       </View>
 
-      {launch.launch_links.article_link && (
+      {launch.links.article_link && (
         <TouchableOpacity
           onPress={handleArticlePress}
           style={styles.articleButton}

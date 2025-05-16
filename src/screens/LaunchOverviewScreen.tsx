@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   View,
   FlatList,
@@ -29,11 +29,10 @@ const LaunchCard: React.FC<LaunchCardProps> = ({ launch, onPress }) => {
         <Card.Content>
           <Text variant="titleLarge">{launch.mission_name}</Text>
           <Text variant="bodyMedium">{formattedDate}</Text>
-          <Text variant="bodyMedium">{launch.launch_site.site_name_long}</Text>
         </Card.Content>
-        {launch.launch_links.flickr_images[0] && (
+        {launch.links.flickr_images[0] && (
           <Card.Cover
-            source={{ uri: launch.launch_links.flickr_images[0] }}
+            source={{ uri: launch.links.flickr_images[0] }}
             style={styles.image}
           />
         )}
@@ -66,15 +65,14 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
     },
   });
 
-
   useEffect(() => {
     // Check network status when component mounts
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
       if (!state.isConnected) {
         Alert.alert(
-          'No Internet Connection',
-          'Please check your internet connection and try again.',
-          [{ text: 'OK' }]
+          "No Internet Connection",
+          "Please check your internet connection and try again.",
+          [{ text: "OK" }]
         );
       }
     });
@@ -116,7 +114,11 @@ export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   return (
     <View style={styles.container}>
       <FlatList
-        data={data.launches}
+        data={[...data.launchesPast].sort(
+          (a, b) =>
+            new Date(b.launch_date_local).getTime() -
+            new Date(a.launch_date_local).getTime()
+        )}
         keyExtractor={(item) => item.mission_name}
         renderItem={({ item }) => (
           <LaunchCard launch={item} onPress={handleLaunchPress} />
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   },
   errorDetail: {
     fontSize: 14,
-    color: '#999',
+    color: "#999",
   },
   retryButton: {
     marginTop: 10,

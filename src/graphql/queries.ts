@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const GET_LAUNCHES = gql`
   query GetLaunches {
-    launches {
+    launchesPast {
       mission_name
       launch_date_local
       launch_site {
@@ -11,7 +11,7 @@ export const GET_LAUNCHES = gql`
       rocket {
         rocket_name
       }
-      launch_links {
+      links {
         article_link
         flickr_images
       }

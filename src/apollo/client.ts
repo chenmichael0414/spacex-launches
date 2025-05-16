@@ -30,7 +30,7 @@ const retryLink = new RetryLink({
 });
 
 const httpLink = new HttpLink({
-  uri: "https://api.spacex.land/graphql/",
+  uri: "https://spacex-production.up.railway.app/",
   fetchOptions: {
     timeout: 10000, // 10 second timeout
   },
