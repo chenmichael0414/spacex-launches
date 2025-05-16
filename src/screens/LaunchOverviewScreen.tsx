@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { LaunchOverviewScreenProps } from "../types/navigation";
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import * as Animatable from "react-native-animatable";
+import { useNetworkError } from "../hooks/useNetworkError";
 
 type AnimatableView = Animatable.View & {
   fadeInRight: (duration: number) => void;
@@ -57,33 +58,14 @@ const LaunchCard: React.FC<LaunchCardProps> = ({
 export const LaunchOverviewScreen: React.FC<LaunchOverviewScreenProps> = ({
   navigation,
 }) => {
-  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>(
-    {}
-  );
-  const cardRefs = useRef<
-    Record<string, React.RefObject<AnimatableView | null>>
-  >({});
+  const [animatedFlags, setAnimatedFlags] = useState<Record<string, boolean>>({});
+  const cardRefs = useRef<Record<string, React.RefObject<AnimatableView | null>>>({});
   const viewabilityTracker = useRef<Record<string, boolean>>({});
+  const { handleError } = useNetworkError();
 
   const { loading, error, data, refetch } = useQuery(GET_LAUNCHES, {
     fetchPolicy: "network-only",
-    onError: (error) => {
-      NetInfo.fetch().then((state: NetInfoState) => {
-        if (!state.isConnected) {
-          Alert.alert(
-            "No Internet Connection",
-            "Please check your internet connection and try again.",
-            [{ text: "OK" }]
-          );
-        } else {
-          Alert.alert(
-            "Error Loading Data",
-            `There was a problem loading the launch data: ${error.message}`,
-            [{ text: "OK" }]
-          );
-        }
-      });
-    },
+    onError: handleError,
   });
 
   useEffect(() => {
