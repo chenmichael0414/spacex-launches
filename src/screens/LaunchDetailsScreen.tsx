@@ -103,7 +103,10 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
               key={index}
               ref={imageRefs.current[imageUrl]}
               useNativeDriver
-              style={{ opacity: 0 }}
+              style={[
+                { opacity: 0 },
+                styles.imageContainer
+              ]}
             >
               <Card style={styles.imageCard}>
                 <Card.Cover source={{ uri: imageUrl }} style={styles.image} />
@@ -116,9 +119,21 @@ export const LaunchDetailsScreen: React.FC<LaunchDetailsScreenProps> = ({
                     icon={isFavorite(imageUrl) ? "heart" : "heart-outline"}
                     size={24}
                     onPress={() => handleFavoritePress(imageUrl)}
-                    style={styles.favoriteButton}
+                    style={[
+                      styles.favoriteButton,
+                      isFavorite(imageUrl) && styles.favoritedButton
+                    ]}
+                    iconColor={isFavorite(imageUrl) ? "#FF69B4" : undefined}
                   />
                 </Animatable.View>
+                {isFavorite(imageUrl) && (
+                  <Animatable.View 
+                    animation="fadeIn"
+                    duration={250}
+                    useNativeDriver
+                    style={styles.favoriteBorder} 
+                  />
+                )}
               </Card>
             </Animatable.View>
           );
@@ -170,9 +185,13 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 8,
   },
-  imageCard: {
+  imageContainer: {
     marginBottom: 16,
+  },
+  imageCard: {
     elevation: 4,
+    borderRadius: 12,
+    overflow: "hidden",
   },
   image: {
     height: 200,
@@ -199,5 +218,19 @@ const styles = StyleSheet.create({
   },
   articleButtonText: {
     color: "white",
+  },
+  favoritedButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+  },
+  favoriteBorder: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 2,
+    borderColor: "#FF1493",
+    borderRadius: 12,
+    pointerEvents: "none",
   },
 });
