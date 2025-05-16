@@ -1,3 +1,25 @@
+/**
+ * Unit Tests for LaunchCard:
+ * 
+ * 1. Rendering Tests:
+ *    - Should render mission name correctly
+ *    - Should format and display date correctly
+ *    - Should display image when available
+ *    - Should not display image when not available
+ * 
+ * 2. Interaction Tests:
+ *    - Should call onPress with correct launch data
+ *    - Should handle press events correctly
+ * 
+ * 3. Animation Tests:
+ *    - Should initialize with opacity 0
+ *    - Should animate in when ref is triggered
+ * 
+ * 4. Style Tests:
+ *    - Should apply correct styles to all elements
+ *    - Should handle long mission names gracefully
+ */
+
 import React from "react";
 import { TouchableOpacity, StyleSheet, ImageStyle } from "react-native";
 import { Text, Card } from "react-native-paper";

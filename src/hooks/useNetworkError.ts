@@ -1,3 +1,20 @@
+/**
+ * Unit Tests for useNetworkError:
+ * 
+ * 1. Network Connectivity Tests:
+ *    - Should show alert when network is disconnected
+ *    - Should not show alert when network is connected
+ *    - Should call onError callback when provided
+ * 
+ * 2. Error Handling Tests:
+ *    - Should handle Apollo errors correctly
+ *    - Should show appropriate error message for network errors
+ *    - Should show appropriate error message for other errors
+ * 
+ * 3. Cleanup Tests:
+ *    - Should unsubscribe from network listener on unmount
+ */
+
 import { useEffect } from "react";
 import { Alert } from "react-native";
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";

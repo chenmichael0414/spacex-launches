@@ -1,3 +1,21 @@
+/**
+ * Unit Tests for useSequentialAnimation:
+ * 
+ * 1. Animation Sequence Tests:
+ *    - Should trigger card animation first
+ *    - Should trigger image animations after card
+ *    - Should trigger article button animation last
+ *    - Should respect hasImages and hasArticleLink flags
+ * 
+ * 2. Timing Tests:
+ *    - Should maintain correct animation delays
+ *    - Should not trigger animations if refs are not available
+ * 
+ * 3. State Management Tests:
+ *    - Should only animate once per mount
+ *    - Should reset animation state on unmount
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { AnimationConfig, SEQUENTIAL_ANIMATION } from "../types/animations";
 
