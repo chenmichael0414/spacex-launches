@@ -192,7 +192,6 @@ const styles = StyleSheet.create({
   imageCard: {
     elevation: 4,
     borderRadius: 12,
-    overflow: "hidden",
   },
   image: {
     height: 200,
